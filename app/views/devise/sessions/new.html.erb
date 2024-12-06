@@ -1,0 +1,48 @@
+<h2 class="text-center mb-4">Iniciar Sesión</h2>
+
+<div class="container" style="max-width: 500px; min-height: 500px; padding-top: 50px; padding-bottom: 50px;"> <!-- Aumentamos el alto y el padding del formulario -->
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "form bg-white p-4 rounded shadow-sm" }) do |f| %>
+
+    <!-- Mostrar mensajes flash -->
+    <% if flash[:notice] %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= flash[:notice] %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+      </div>
+    <% end %>
+
+    <% if flash[:alert] %>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <%= flash[:alert] %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+      </div>
+    <% end %>
+
+    <!-- Campo de email -->
+    <div class="mb-3">
+      <%= f.label :email, class: "form-label" %>
+      <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control", placeholder: "Correo electrónico" %>
+    </div>
+
+    <!-- Campo de contraseña -->
+    <div class="mb-3">
+      <%= f.label :password, class: "form-label" %>
+      <%= f.password_field :password, autocomplete: "current-password", class: "form-control", placeholder: "Contraseña" %>
+    </div>
+
+    <!-- Campo "Recordarme" -->
+    <% if devise_mapping.rememberable? %>
+      <div class="form-check mb-3">
+        <%= f.check_box :remember_me, class: "form-check-input" %>
+        <%= f.label :remember_me, class: "form-check-label" %>
+      </div>
+    <% end %>
+    
+    <!-- Botón de envío con el estilo del botón de "Mi Perfil" -->
+    <div class="d-grid gap-2">
+      <%= f.submit "Iniciar sesión", class: "btn btn-profile btn-sm" %> <!-- Aplicamos la clase btn-profile -->
+    </div>
+  
+  <% end %>
+
+</div>

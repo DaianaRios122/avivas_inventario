@@ -1,0 +1,68 @@
+<h1 class="text-center my-4">Gestión de Usuarios</h1>
+
+<%# Mensajes de alerta y notificación %>
+<% if flash[:notice].present? %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <%= flash[:notice] %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+  </div>
+<% end %>
+
+<% if flash[:alert].present? %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <%= flash[:alert] %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+  </div>
+<% end %>
+
+<% if @usuarios.present? %>
+  <%# Botón de Crear Usuario %>
+  <div class="d-flex justify-content-end mb-3">
+    <%= link_to 'Crear Usuario', new_admin_usuario_path, class: "btn btn-profile btn-sm"  %>
+  </div>
+
+  <%# Tabla de Usuarios %>
+  <table class="table table-hover table-bordered align-middle">
+    <thead class="table-dark">
+      <tr>
+        <th>Nombre de usuario</th>
+        <th>Email</th>
+        <th>Rol</th>
+        <th>Activo</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @usuarios.each do |usuario| %>
+        <tr>
+          <td><%= usuario.nombre_usuario %></td>
+          <td><%= usuario.email %></td>
+          <td><%= usuario.rol %></td>
+          <td>
+            <span class="badge <%= usuario.activo ? 'bg-success' : 'bg-danger' %>">
+              <%= usuario.activo ? 'Sí' : 'No' %>
+            </span>
+          </td>
+          <td>
+            <%# Botón Mostrar %>
+            <%= link_to admin_usuario_path(usuario), class: 'btn btn-info btn-sm me-1', title: 'Mostrar' do %>
+              <i class="bi bi-eye"></i>
+            <% end %>
+            <% if current_usuario.administrador? %>
+              <%# Botón Editar %>
+              <%= link_to edit_admin_usuario_path(usuario), class: 'btn btn-warning btn-sm me-1', title: 'Editar' do %>
+                <i class="bi bi-pencil"></i>
+              <% end %>
+              <%# Botón Desactivar %>
+              <%= button_to deactivate_admin_usuario_path(usuario), method: :patch, class: "btn btn-danger btn-sm", data: { confirm: "¿Estás seguro de que deseas desactivar este usuario?" }, title: 'Desactivar' do %>
+                <i class="bi bi-person-x"></i>
+              <% end %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="text-center">No hay usuarios registrados.</p>
+<% end %>

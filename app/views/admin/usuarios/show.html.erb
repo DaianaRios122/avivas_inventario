@@ -1,0 +1,26 @@
+<h1 class="mb-4">Detalles del Usuario</h1>
+
+<div class="card">
+  <div class="card-header">
+    Información del Usuario
+  </div>
+  <div class="card-body">
+    <p><strong>Nombre de Usuario:</strong> <%= @usuario.nombre_usuario %></p>
+    <p><strong>Correo Electrónico:</strong> <%= @usuario.email %></p>
+    <p><strong>Teléfono:</strong> <%= @usuario.telefono %></p>
+    <p><strong>Rol:</strong> <%= @usuario.rol.humanize %></p>
+    
+    <!-- Campo Activo con color de fondo condicional -->
+    <p><strong>Activo:</strong> 
+      <span class="badge <%= @usuario.activo ? 'bg-success text-white' : 'bg-danger text-white' %>">
+        <%= @usuario.activo ? 'Sí' : 'No' %>
+      </span>
+    </p>
+
+    <p><strong>Fecha de Ingreso:</strong> <%= @usuario.fecha_ingreso %></p>
+  </div>
+</div>
+
+
+<!-- Botón de Volver con más estilo y texto actualizado -->
+<%= link_to "Volver Listado", admin_usuarios_path, class: 'btn btn-warning' %>

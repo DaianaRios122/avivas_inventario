@@ -1,0 +1,80 @@
+<h1 class="text-center my-4">Crear Usuario</h1>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      
+      <!-- Mostrar mensajes flash -->
+      <% if flash[:notice] %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <%= flash[:notice] %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+      <% end %>
+
+      <% if flash[:alert] %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <%= flash[:alert] %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+      <% end %>
+
+      <%= form_with model: @usuario, url: admin_usuarios_path, local: true, class: "form bg-light p-4 rounded shadow-sm" do |f| %>
+
+        <% if @usuario.errors.any? %>
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Errores encontrados:</strong>
+            <ul>
+              <% @usuario.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+          </div>
+        <% end %>
+
+        <div class="form-group mb-3">
+          <%= f.label :nombre_usuario, "Nombre de Usuario", class: "form-label" %>
+          <%= f.text_field :nombre_usuario, class: "form-control form-control-lg", required: true %>
+        </div>
+
+        <div class="form-group mb-3">
+          <%= f.label :email, "Correo Electrónico", class: "form-label" %>
+          <%= f.email_field :email, class: "form-control form-control-lg", required: true %>
+        </div>
+
+        <div class="form-group mb-3">
+          <%= f.label :telefono, "Teléfono", class: "form-label" %>
+          <%= f.telephone_field :telefono, class: "form-control form-control-lg" %>
+        </div>
+
+        <div class="form-group mb-3">
+          <%= f.label :rol, "Rol", class: "form-label" %>
+          <%= f.select :rol, Usuario.rols.keys.map { |role| [role.humanize, role] if current_usuario.administrador? || (current_usuario.gerente? && role != 'administrador') }.compact, {}, class: "form-select form-select-lg" %>
+        </div>
+
+        <div class="form-group mb-3">
+          <%= f.label :password, "Contraseña", class: "form-label" %>
+          <%= f.password_field :password, class: "form-control form-control-lg", required: true %>
+        </div>
+
+        <div class="form-group mb-3">
+          <%= f.label :password_confirmation, "Confirmar Contraseña", class: "form-label" %>
+          <%= f.password_field :password_confirmation, class: "form-control form-control-lg", required: true %>
+        </div>
+
+        <div class="form-group mb-3">
+          <%= f.label :fecha_ingreso, "Fecha de Ingreso", class: "form-label" %>
+          <%= f.date_field :fecha_ingreso, class: "form-control form-control-lg", required: true %>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="d-flex justify-content-between mt-4">
+          <%= link_to "Volver al Listado", admin_usuarios_path, class: "btn btn-warning btn-lg" %>
+          <%= f.submit "Crear Usuario", class: "btn btn-profile btn-sm"  %>
+        </div>
+
+      <% end %>
+    </div>
+  </div>
+</div>
