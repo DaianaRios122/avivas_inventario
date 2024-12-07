@@ -10,7 +10,58 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_11_28_214433) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_06_212418) do
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "categoria", force: :cascade do |t|
+    t.string "nombre", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["nombre"], name: "index_categoria_on_nombre", unique: true
+  end
+
+  create_table "productos", force: :cascade do |t|
+    t.string "nombre", null: false
+    t.text "descripcion", null: false
+    t.decimal "precio_unitario", precision: 10, scale: 2, null: false
+    t.integer "stock_disponible", default: 0, null: false
+    t.datetime "fecha_ingreso", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "fecha_ultima_modificacion", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "fecha_baja"
+    t.string "talle"
+    t.string "color"
+    t.integer "categoria_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["categoria_id"], name: "index_productos_on_categoria_id"
+  end
+
   create_table "usuarios", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -28,4 +79,8 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_28_214433) do
     t.index ["nombre_usuario"], name: "index_usuarios_on_nombre_usuario", unique: true
     t.index ["reset_password_token"], name: "index_usuarios_on_reset_password_token", unique: true
   end
+
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "productos", "categoria", column: "categoria_id"
 end

@@ -1,0 +1,67 @@
+<h1 class="text-center my-4">Gestión de Productos</h1>
+
+<%# Mensajes de alerta y notificación %>
+<% if flash[:notice].present? %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <%= flash[:notice] %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+  </div>
+<% end %>
+
+<% if flash[:alert].present? %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <%= flash[:alert] %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+  </div>
+<% end %>
+
+<%# Botón de Crear Producto %>
+  <div class="d-flex justify-content-end mb-3">
+    <%= link_to 'Crear Producto', new_producto_path, class: "btn btn-profile btn-sm"  %>
+</div>
+<% if @productos.present? %>
+  
+  <%# Tabla de Productos %>
+  <table class="table table-hover table-bordered align-middle">
+    <thead class="table-dark">
+      <tr>
+        <th>Nombre</th>
+        <th>Precio Unitario</th>
+        <th>Stock Disponible</th>
+        <th>Fecha de Ingreso</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @productos.each do |producto| %>
+        <tr>
+          <td><%= producto.nombre %></td>
+          <td><%= number_to_currency(producto.precio_unitario) %></td>
+          <td><%= producto.stock_disponible %></td>
+          <td><%= producto.fecha_ingreso.strftime("%d/%m/%Y %H:%M") %></td>
+          <td>
+            <%# Botón Mostrar %>
+            <%= link_to producto_path(producto), class: 'btn btn-info btn-sm me-1', title: 'Mostrar' do %>
+              <i class="bi bi-eye"></i>
+            <% end %>
+
+            <%# Botón Editar %>
+            <%= link_to edit_producto_path(producto), class: 'btn btn-warning btn-sm me-1', title: 'Editar' do %>
+              <i class="bi bi-pencil"></i>
+            <% end %>
+
+            <%# Botón Eliminar %>
+            <%= button_to producto_path(producto), method: :delete, class: 'btn btn-danger btn-sm', data: { confirm: '¿Estás seguro de que deseas eliminar este producto?' }, title: 'Eliminar' do %>
+              <i class="bi bi-trash"></i>
+            <% end %>
+            <%= link_to edit_stock_producto_path(producto), class: 'btn btn-success btn-sm', title: 'Cambiar Stock' do %>
+              <i class="bi bi-box-arrow-up"></i>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="text-center">No hay productos registrados.</p>
+<% end %>

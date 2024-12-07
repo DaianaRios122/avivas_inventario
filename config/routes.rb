@@ -1,4 +1,13 @@
 Rails.application.routes.draw do
+  
+
+  resources :productos do
+    member do
+      get :edit_stock
+      patch :change_stock
+    end
+  end
+  
   namespace :admin do
     resources :usuarios, except: [:destroy] do
       member do
