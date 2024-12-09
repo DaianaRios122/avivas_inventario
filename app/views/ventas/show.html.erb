@@ -1,0 +1,84 @@
+<% content_for :title, "Detalles de la Venta" %>
+
+<div class="container mt-5">
+  <!-- Mensajes de alerta -->
+  <% if flash[:notice].present? %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+       <%= flash[:notice] %>
+       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+  <% end %>
+  <div class="card shadow-sm">
+    <div class="card-header bg-warning text-white">
+      <h3 class="card-title text-center">Detalles de la Venta</h3>
+    </div>
+    <div class="card-body">
+      <!-- Información General -->
+      <h5 class="mb-4">Información General</h5>
+      <table class="table table-bordered">
+        <tbody>
+          <tr>
+            <th>Fecha y Hora:</th>
+            <td><%= @venta.fecha_hora.strftime('%d/%m/%Y %H:%M') %></td>
+          </tr>
+          <tr>
+            <th>Cliente:</th>
+            <td><%= @venta.cliente %></td>
+          </tr>
+          <tr>
+            <th>Empleado:</th>
+            <td><%= @venta.usuario.nombre_usuario %></td>
+          </tr>
+          <tr>
+            <th>Total:</th>
+            <td><%= number_to_currency(@venta.total, unit: "$", separator: ".", delimiter: ",") %></td>
+          </tr>
+          <tr>
+            <th>Estado:</th>
+            <td>
+              <span class="badge <%= @venta.estado ? 'bg-success' : 'bg-danger' %>">
+                <%= @venta.estado ? 'Activa' : 'Cancelada' %>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Productos Vendidos -->
+      <h5 class="mt-5 mb-4">Productos Vendidos</h5>
+      <table class="table table-hover table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>Nombre del Producto</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @venta.venta_productos.each do |vp| %>
+            <tr>
+              <td><%= vp.producto.nombre %></td>
+              <td><%= vp.cantidad %></td>
+              <td><%= number_to_currency(vp.precio_unitario, unit: "$", separator: ".", delimiter: ",") %></td>
+              <td><%= number_to_currency(vp.cantidad * vp.precio_unitario, unit: "$", separator: ".", delimiter: ",") %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer d-flex justify-content-between">
+      <!-- Botón para Volver al Listado -->
+      <%= link_to 'Volver al Listado', ventas_path, class: 'btn btn-secondary' %>
+      <%# Botón Cancelar Venta (Destroy) %>
+      <% if @venta.estado %>
+          <%= button_to venta_path(@venta), method: :delete, class: "btn btn-danger btn-sm", data: { confirm: "¿Estás seguro de que deseas cancelar esta venta?" }, title: 'Cancelar' do %>
+              <i class="bi bi-x-circle"></i>
+      <% end %>
+      <% else %>
+          <span class="text-muted">Cancelada</span>
+      <% end %>
+    </div>
+  </div>
+</div>
+

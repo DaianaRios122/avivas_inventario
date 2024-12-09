@@ -57,8 +57,9 @@
   <!-- Categoría del Producto -->
   <div class="form-group mb-3">
     <%= f.label :categoria_id, "Categoría", class: "form-label" %>
-    <%= f.collection_select :categoria_id,  Categoria.all, :id, :nombre, { prompt: "Seleccionar Categoría" }, class: "form-select form-select-lg" %>
+    <%= f.collection_select :categoria_id, @categorias, :id, :nombre, { prompt: "Seleccionar Categoría" }, class: "form-select form-select-lg" %>
   </div>
+  
 
   <!-- Talle del Producto (opcional) -->
   <div class="form-group mb-3">

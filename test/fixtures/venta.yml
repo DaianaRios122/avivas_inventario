@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  fecha_hora: 2024-12-07 19:25:02
+  total: 9.99
+  estado: false
+  empleado: one
+  cliente: MyString
+
+two:
+  fecha_hora: 2024-12-07 19:25:02
+  total: 9.99
+  estado: false
+  empleado: two
+  cliente: MyString

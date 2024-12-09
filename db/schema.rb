@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_06_212418) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_07_222548) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -52,7 +52,6 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_06_212418) do
     t.decimal "precio_unitario", precision: 10, scale: 2, null: false
     t.integer "stock_disponible", default: 0, null: false
     t.datetime "fecha_ingreso", default: -> { "CURRENT_TIMESTAMP" }, null: false
-    t.datetime "fecha_ultima_modificacion", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.datetime "fecha_baja"
     t.string "talle"
     t.string "color"
@@ -80,7 +79,32 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_06_212418) do
     t.index ["reset_password_token"], name: "index_usuarios_on_reset_password_token", unique: true
   end
 
+  create_table "venta", force: :cascade do |t|
+    t.datetime "fecha_hora", null: false
+    t.decimal "total", precision: 10, scale: 2, null: false
+    t.boolean "estado", default: true, null: false
+    t.integer "usuario_id", null: false
+    t.string "cliente"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["usuario_id"], name: "index_venta_on_usuario_id"
+  end
+
+  create_table "venta_productos", force: :cascade do |t|
+    t.integer "venta_id", null: false
+    t.integer "producto_id", null: false
+    t.integer "cantidad", null: false
+    t.decimal "precio_unitario", precision: 10, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["producto_id"], name: "index_venta_productos_on_producto_id"
+    t.index ["venta_id"], name: "index_venta_productos_on_venta_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "productos", "categoria", column: "categoria_id"
+  add_foreign_key "venta", "usuarios"
+  add_foreign_key "venta_productos", "productos"
+  add_foreign_key "venta_productos", "venta"
 end

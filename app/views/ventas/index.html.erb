@@ -1,0 +1,68 @@
+<h1 class="text-center my-4">Gestión de Ventas</h1>
+
+<%# Mensajes de alerta y notificación %>
+<% if flash[:notice].present? %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <%= flash[:notice] %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+  </div>
+<% end %>
+
+<% if flash[:alert].present? %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <%= flash[:alert] %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+  </div>
+<% end %>
+
+<% if @ventas.present? %>
+  <%# Botón de Crear Venta %>
+  <div class="d-flex justify-content-end mb-3">
+    <%= link_to 'Crear Venta', new_venta_path, class: "btn btn-profile btn-sm"  %>
+  </div>
+  <%# Tabla de Ventas %>
+  <table class="table table-hover table-bordered align-middle">
+    <thead class="table-dark">
+      <tr>
+        <th>Fecha_Hora de realización</th>
+        <th>Cliente</th>
+        <th>Empleado</th>
+        <th>Total</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @ventas.each do |venta| %>
+        <tr>
+          <td><%= venta.fecha_hora.strftime('%d/%m/%Y %H:%M') %></td>
+          <td><%= venta.cliente %></td>
+          <td><%= venta.usuario.nombre_usuario %></td>
+          <td><%= number_to_currency(venta.total, unit: "$", separator: ".", delimiter: ",") %></td>
+          <td>
+            <span class="badge <%= venta.estado ? 'bg-success' : 'bg-danger' %>">
+              <%= venta.estado ? 'Activa' : 'Cancelada' %>
+            </span>
+          </td>
+          <td>
+            <%# Botón Mostrar %>
+            <%= link_to venta_path(venta), class: 'btn btn-info btn-sm me-1', title: 'Mostrar' do %>
+              <i class="bi bi-eye"></i>
+            <% end %>
+            <%# Botón Cancelar Venta (Destroy) %>
+            <% if venta.estado %>
+                 <%= button_to venta_path(venta), method: :delete, class: "btn btn-danger btn-sm", data: { confirm: "¿Estás seguro de que deseas cancelar esta venta?" }, title: 'Cancelar' do %>
+                      <i class="bi bi-x-circle"></i>
+            <% end %>
+            <% else %>
+                 <span class="text-muted">Cancelada</span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="text-center">No hay ventas registradas.</p>
+<% end %>
+

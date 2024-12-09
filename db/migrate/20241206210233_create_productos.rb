@@ -6,7 +6,6 @@ class CreateProductos < ActiveRecord::Migration[8.0]
       t.decimal :precio_unitario, precision: 10, scale: 2, null: false
       t.integer :stock_disponible, null: false, default: 0
       t.datetime :fecha_ingreso,  null: false, default: -> { 'CURRENT_TIMESTAMP' }
-      t.datetime :fecha_ultima_modificacion, null: false, default: -> { 'CURRENT_TIMESTAMP' }
       t.datetime :fecha_baja
       t.string :talle
       t.string :color

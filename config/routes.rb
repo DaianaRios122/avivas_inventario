@@ -1,10 +1,15 @@
 Rails.application.routes.draw do
-  
+
+  resources :ventas, except: [:edit, :update] do
+    member do
+    end
+  end
 
   resources :productos do
     member do
       get :edit_stock
       patch :change_stock
+      get :precio
     end
   end
   

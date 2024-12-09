@@ -1,0 +1,153 @@
+<div class="container mt-5">
+  <div class="card shadow">
+    <div class="card-header bg-warning text-white">
+      <h1 class="display-6 text-center">Registrar Venta</h1>
+    </div>
+    <div class="card-body">
+      <%= form_with(model: @venta, url: ventas_path, local: true, class: "needs-validation") do |form| %>
+        <% if flash[:notice] %>
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <%= flash[:notice] %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+          </div>
+        <% end %>
+
+        <% if flash[:alert] %>
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <%= flash[:alert] %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+          </div>
+        <% end %>
+
+        <% if @venta.errors.any? %>
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Errores encontrados:</strong>
+            <ul>
+              <% @venta.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+          </div>
+        <% end %>
+
+        <div class="mb-3">
+          <%= form.label :cliente, 'Cliente', class: "form-label fw-bold" %>
+          <%= form.text_field :cliente, class: "form-control", required: true %>
+        </div>
+
+        <div class="mb-3">
+          <%= form.label :fecha_hora, 'Fecha y Hora', class: "form-label fw-bold" %>
+          <%= form.datetime_field :fecha_hora, class: "form-control", required: true %>
+        </div>
+
+        <h4 class="mt-4">Productos Vendidos:</h4>
+        <div id="productos">
+          <%= form.fields_for :venta_productos do |vp_form| %>
+            <div class="row mb-3 producto-row">
+              <div class="col-md-5">
+                <%= vp_form.label :producto_id, 'Producto', class: "form-label fw-bold" %>
+                <%= vp_form.collection_select :producto_id, @productos, :id, :nombre, { prompt: 'Seleccione un producto' }, { class: "form-select producto-select" } %>
+              </div>
+              <div class="col-md-3">
+                <%= vp_form.label :cantidad, 'Cantidad', class: "form-label fw-bold" %>
+                <%= vp_form.number_field :cantidad, class: "form-control cantidad-input", required: true, min: 1 %>
+              </div>
+              <div class="col-md-3">
+                <%= vp_form.label :precio_unitario, 'Precio Unitario', class: "form-label fw-bold" %>
+                <%= vp_form.text_field :precio_unitario, class: "form-control precio-unitario", required: true, readonly: true %>
+              </div>
+              <div class="col-md-1 d-flex align-items-end">
+                <button type="button" class="btn btn-danger btn-remove-producto">X</button>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <button type="button" id="btn-add-producto" class="btn btn-warning">Agregar Producto</button>
+
+        <div class="text-center">
+          <%= form.submit 'Registrar Venta', class: "btn btn-profile btn-sm" %>
+        </div>
+      <% end %>
+    </div>
+    <div class="text-center">
+          <%= link_to 'Volver Listado', ventas_path, class: "btn btn-secondary btn-sm" %>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const btnAddProducto = document.getElementById("btn-add-producto");
+    const productosContainer = document.getElementById("productos");
+
+    btnAddProducto.addEventListener("click", async () => {
+      const productoIndex = productosContainer.querySelectorAll('.producto-row').length;
+
+      try {
+        const response = await fetch('/productos.json');
+        const productos = await response.json();
+    
+        const productoOptions = productos.map(producto =>
+          `<option value="${producto.id}">${producto.nombre}</option>`
+        ).join('');
+    
+        const newRow = `
+          <div class="row mb-3 producto-row">
+            <div class="col-md-5">
+              <label class="form-label">Producto</label>
+              <select class="form-select producto-select" name="venta[venta_productos_attributes][${productoIndex}][producto_id]" required>
+                <option value="" disabled selected>Seleccione un producto</option>
+                ${productoOptions}
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Cantidad</label>
+              <input type="number" name="venta[venta_productos_attributes][${productoIndex}][cantidad]" class="form-control cantidad-input" required min="1">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Precio unitario</label>
+              <input type="text" name="venta[venta_productos_attributes][${productoIndex}][precio_unitario]" class="form-control precio-unitario" required readonly>
+            </div>
+            <div class="col-md-1 d-flex align-items-end">
+              <button type="button" class="btn btn-danger btn-remove-producto">X</button>
+            </div>
+          </div>`;
+    
+        productosContainer.insertAdjacentHTML("beforeend", newRow);
+      } catch (error) {
+        console.error("Error al cargar los productos:", error);
+      }
+    });
+  
+
+    productosContainer.addEventListener("click", (e) => {
+      if (e.target.classList.contains("btn-remove-producto")) {
+        e.target.closest(".producto-row").remove();
+      }
+    });
+
+    productosContainer.addEventListener("change", async (e) => {
+      if (e.target.classList.contains("producto-select")) {
+        const productoId = e.target.value;
+        const precioField = e.target.closest(".producto-row").querySelector(".precio-unitario");
+    
+        if (productoId) {
+          try {
+            const response = await fetch(`/productos/${productoId}/precio`);
+            const data = await response.json();
+            if (data.precio_unitario) {
+              precioField.value = data.precio_unitario;
+            } else {
+              precioField.value = "Precio no disponible";
+            }
+          } catch (error) {
+            console.error("Error al obtener el precio:", error);
+            precioField.value = "Error al cargar el precio";
+          }
+        }
+      }
+    });
+  });
+</script>

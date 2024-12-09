@@ -4,6 +4,7 @@ class Producto < ApplicationRecord
   has_many_attached :imagenes
 
   validates :nombre, :descripcion, :precio_unitario, :stock_disponible, :categoria_id, presence: true
+  validates :categoria_id, presence: { message: "Debe seleccionar una categoría" }
   validates :precio_unitario, numericality: { greater_than_or_equal_to: 0 }
   validates :stock_disponible, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validate :correct_image_type, on: :create
@@ -13,11 +14,22 @@ class Producto < ApplicationRecord
   validates :color, length: { maximum: 50 }, allow_blank: true
   validates :fecha_ingreso, presence: true
   validate :fecha_ingreso_valida
+  scope :activos, -> { where(fecha_baja: nil) } # Productos activos (no eliminados)
 
 
   # Borrado lógico (poner stock en 0)
   def eliminar_producto
     update(stock_disponible: 0, fecha_baja: Time.current)
+  end
+
+  def disminuir_stock(cantidad)
+    raise "Stock insuficiente para #{nombre}" if stock_disponible < cantidad
+
+    update!(stock_disponible: stock_disponible - cantidad)
+  end
+
+  def incrementar_stock(cantidad)
+    update!(stock_disponible: stock_disponible + cantidad)
   end
 
   private

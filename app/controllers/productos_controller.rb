@@ -2,10 +2,16 @@ class ProductosController < ApplicationController
   before_action :authenticate_usuario!
   load_and_authorize_resource
   before_action :set_producto, only: %i[ show edit update destroy edit_stock ]
+  before_action :load_categories, only: %i[ new edit create update]  # Cargar categorías
+
 
   # GET /productos or /productos.json
   def index
-    @productos = Producto.where(fecha_baja: nil)  # Filtrar productos que no tienen fecha de baja
+    @productos = Producto.activos  # Filtrar productos que no tienen fecha de baja
+    respond_to do |format|
+      format.html # Para vistas normales
+      format.json { render json: @productos.select(:id, :nombre) } # Para solicitudes AJAX
+    end
   end
 
   # GET /productos/1 or /productos/1.json
@@ -28,7 +34,7 @@ class ProductosController < ApplicationController
     if @producto.save
       redirect_to @producto, notice: 'Producto creado exitosamente.'
     else
-      flash[:alert] = 'Error al crear el producto.'
+      flash[:alert] = 'Error al crear el producto.' 
       render :new, status: :unprocessable_entity
     end
   end
@@ -68,10 +74,19 @@ class ProductosController < ApplicationController
     end
   end
 
+  def precio
+    producto = Producto.find(params[:id])
+    render json: { precio_unitario: producto.precio_unitario }
+  end
+
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_producto
     @producto = Producto.find(params[:id])
+  end
+
+  def load_categories
+    @categorias = Categoria.all  # Cargar todas las categorías
   end
 
   # Only allow a list of trusted parameters through.
