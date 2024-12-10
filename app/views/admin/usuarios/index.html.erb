@@ -44,19 +44,22 @@
             </span>
           </td>
           <td>
-            <%# Botón Mostrar %>
-            <%= link_to admin_usuario_path(usuario), class: 'btn btn-info btn-sm me-1', title: 'Mostrar' do %>
-              <i class="bi bi-eye"></i>
+            <%# Condicional para verificar permisos de Mostrar, edición y desactivación %>
+            <% if current_usuario.administrador? || (current_usuario.gerente? && usuario.rol != 'administrador') %> 
+                   <%# Botón Mostrar %>
+                   <%= link_to admin_usuario_path(usuario), class: 'btn btn-info btn-sm me-1', title: 'Mostrar' do %>
+                       <i class="bi bi-eye"></i>
+                   <% end %>
+                   <%# Botón Editar %>
+                   <%= link_to edit_admin_usuario_path(usuario), class: 'btn btn-warning btn-sm me-1', title: 'Editar' do %>
+                       <i class="bi bi-pencil"></i>
+                   <% end %>
             <% end %>
             <% if current_usuario.administrador? %>
-              <%# Botón Editar %>
-              <%= link_to edit_admin_usuario_path(usuario), class: 'btn btn-warning btn-sm me-1', title: 'Editar' do %>
-                <i class="bi bi-pencil"></i>
-              <% end %>
-              <%# Botón Desactivar %>
-              <%= button_to deactivate_admin_usuario_path(usuario), method: :patch, class: "btn btn-danger btn-sm", data: { confirm: "¿Estás seguro de que deseas desactivar este usuario?" }, title: 'Desactivar' do %>
-                <i class="bi bi-person-x"></i>
-              <% end %>
+                   <%# Botón Desactivar %>
+                   <%= button_to deactivate_admin_usuario_path(usuario), method: :patch, class: "btn btn-danger btn-sm", data: { confirm: "¿Estás seguro de que deseas desactivar este usuario?" }, title: 'Desactivar' do %>
+                       <i class="bi bi-person-x"></i>
+                  <% end %>
             <% end %>
           </td>
         </tr>

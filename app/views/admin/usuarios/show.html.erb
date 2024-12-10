@@ -2,6 +2,13 @@
 
 <div class="card">
   <div class="card-header">
+  <!-- Mensajes de alerta -->
+  <% if flash[:notice].present? %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <%= flash[:notice] %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+  <% end %>
     Información del Usuario
   </div>
   <div class="card-body">
@@ -21,6 +28,7 @@
   </div>
 </div>
 
-
-<!-- Botón de Volver con más estilo y texto actualizado -->
-<%= link_to "Volver Listado", admin_usuarios_path, class: 'btn btn-warning' %>
+<% if current_usuario.administrador? || current_usuario.gerente? %>
+     <!-- Botón de Volver con más estilo y texto actualizado -->
+     <%= link_to "Volver Listado", admin_usuarios_path, class: 'btn btn-warning' %>
+<% end %>

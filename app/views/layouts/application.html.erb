@@ -66,18 +66,24 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<%=   productos_path %>">Productos</a>
-                    </li>
-                    <li class="nav-item">
+                    <%# Solo mostrar el botón de usuarios si el usuario puede gestionar usuarios %>
+                    <% if can?(:manage_users, Usuario) %>
+                        <li class="nav-item">
                             <a class="nav-link" href="<%=  admin_usuarios_path %>">Usuarios</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<%= ventas_path %>">Ventas</a>
-                    </li>
+                        </li>
+                    <% end %>
+                    <%# Solo mostrar el botón de productos si el usuario puede gestionar productos %>
+                    <% if can?(:manage, Producto) %>
+                        <li class="nav-item">
+                           <a class="nav-link" href="<%=   productos_path %>">Productos</a>
+                        </li>
+                    <% end %>
+                    <%# Solo mostrar el botón de ventas si el usuario puede gestionar ventas %>
+                    <% if can?(:manage, Venta) %>
+                        <li class="nav-item">
+                           <a class="nav-link" href="<%= ventas_path %>">Ventas</a>
+                        </li>
+                    <% end %>
                 </ul>
                 <!-- Botón para abrir el OffCanvas -->
                 <button class="btn btn-profile ms-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
@@ -101,11 +107,20 @@
                     </a>
                 </li>
                 <li class="list-group-item">
-                     <%= button_to destroy_usuario_session_path, method: :delete, data: { confirm: '¿Estás seguro de que deseas cerrar sesión?' }, class: 'btn btn-danger' do %>
-                         <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-                     <% end %>
+                    <% if current_usuario %>
+                         <a href="<%= edit_admin_usuario_path(current_usuario) %>" class="btn btn-link text-decoration-none">
+                             <i class="bi bi-pencil-square"></i> Editar Perfil
+                         </a>
+                    <% else %>
+                         <p>No estás autenticado</p>
+                    <% end %>
                 </li>
-
+                <!-- Botón Cerrar sesión con el mismo estilo -->
+                <li class="list-group-item">
+                    <%= button_to destroy_usuario_session_path, method: :delete, data: { confirm: '¿Estás seguro de que deseas cerrar sesión?' }, class: 'btn btn-outline-danger w-100 text-start mb-3 p-2' do %>
+                         <i class="bi bi-box-arrow-left"></i> Cerrar sesión
+                    <% end %>
+                </li>
             </ul>
         </div>
     </div>

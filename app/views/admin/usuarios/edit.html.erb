@@ -45,16 +45,19 @@
       <%= f.telephone_field :telefono, class: "form-control form-control-lg" %>
     </div>
 
-    <% if current_usuario.gerente? %>
-      <div class="mb-3">
-        <%= f.label :rol, "Rol", class: "form-label" %>
-        <%= f.select :rol, Usuario.rols.keys.reject { |role| role == 'administrador' }.map { |role| [role.humanize, role] }, {}, class: "form-select form-select-lg", disabled: current_usuario.gerente? %>
-      </div>
-    <% end %>
-
     <div class="mb-3">
-        <%= f.label :rol, "Rol", class: "form-label" %>
-        <%= f.select :rol, Usuario.rols.keys.map { |role| [role.humanize, role] if current_usuario.administrador? || (current_usuario.gerente? && role != 'administrador') }.compact, {}, class: "form-select form-select-lg" %>
+         <%= f.label :rol, "Rol", class: "form-label" %>
+         <% if @usuario.id == current_usuario.id %>
+            <!-- Si es el propio usuario, solo mostrar el rol como texto -->
+            <div class="form-control form-control-lg" disabled>
+                  <%= @usuario.rol.humanize %>  <!-- Muestra el rol actual del usuario -->
+            </div>
+         <% else %>
+            <!-- Si es otro usuario, mostrar el select para cambiar el rol -->
+            <%= f.select :rol, Usuario.rols.keys.map { |role| 
+                [role.humanize, role] if current_usuario.administrador? || (current_usuario.gerente? && role != 'administrador')
+             }.compact, {}, class: "form-select form-select-lg" %>
+         <% end %>
     </div>
 
     <div class="mb-3">
@@ -72,11 +75,17 @@
       <%= f.date_field :fecha_ingreso, class: "form-control form-control-lg" %>
     </div>
 
-    <!-- Botones de acción -->
-    <div class="d-flex justify-content-between mt-4">
-        <%= link_to "Volver al Listado", admin_usuarios_path, class: "btn btn-warning btn-lg" %>
-        <%= f.submit "Actualizar Usuario", class: "btn btn-profile btn-sm" %>
-    </div>
+    <!-- Botón de "Volver al Listado", solo visible para administradores o gerentes -->
+    <% if current_usuario.administrador? || current_usuario.gerente? %>
+       <div class="d-flex justify-content-between mt-4">
+            <%= link_to "Volver al Listado", admin_usuarios_path, class: "btn btn-warning btn-lg" %>
+            <%= f.submit "Actualizar Usuario", class: "btn btn-profile btn-sm" %>
+       </div>
+    <% else %>
+       <div class="d-flex justify-content-between mt-4">
+            <%= f.submit "Actualizar Usuario", class: "btn btn-profile btn-sm" %>
+       </div>
+    <% end %>
 
   <% end %>
 </div>
