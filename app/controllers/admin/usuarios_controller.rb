@@ -3,7 +3,7 @@ class Admin::UsuariosController < ApplicationController
   before_action :authenticate_usuario!
   load_and_authorize_resource
   #before_action :verify_admin_or_manager
-  before_action :verify_admin_or_manager, except: [:edit, :update, :update_password, :show]  # Excluir las acciones edit/update del check
+  before_action :verify_admin_or_manager, except: [:edit, :update, :show]  # Excluir las acciones edit/update del check
 
   
   def index
@@ -56,21 +56,6 @@ class Admin::UsuariosController < ApplicationController
     end
   end
 
-  def update_password
-    @usuario = Usuario.find(params[:id])
-  
-    if current_usuario.administrador?
-      if @usuario.update(password_params)
-        redirect_to admin_usuarios_path, notice: 'Contraseña actualizada exitosamente.'
-      else
-        flash[:alert] = 'Error al actualizar la contraseña.'
-        render :edit_password, status: :unprocessable_entity
-      end
-    else
-      redirect_to admin_usuarios_path, alert: 'No tienes permisos para cambiar contraseñas.'
-    end
-  end
-
 
   def show
     @usuario = Usuario.find_by(id: params[:id])
@@ -113,12 +98,6 @@ class Admin::UsuariosController < ApplicationController
     params.require(:usuario).permit(:nombre_usuario, :email, :telefono, :activo, :rol, :fecha_ingreso, :password, :password_confirmation)
           .merge(rol: rol_param.to_sym.in?(permitted_roles) ? rol_param : 'empleado')
   end
-
-
-  def password_params
-    params.require(:usuario).permit(:password, :password_confirmation)
-  end
-
   
   def verify_admin_or_manager
     logger.debug "Usuario actual: #{current_usuario.rol}"  # Verifica el rol del usuario actual

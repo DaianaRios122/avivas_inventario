@@ -85,10 +85,12 @@
                         </li>
                     <% end %>
                 </ul>
-                <!-- Botón para abrir el OffCanvas -->
-                <button class="btn btn-profile ms-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
-                    <i class="bi bi-person-circle"></i> Mi Perfil
-                </button>
+                <% if usuario_signed_in? %> 
+                    <!-- Botón para abrir el OffCanvas -->
+                    <button class="btn btn-profile ms-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+                       <i class="bi bi-person-circle"></i> Mi Perfil
+                    </button>
+                <% end %>   
             </div>
         </div>
     </nav>
@@ -102,7 +104,7 @@
         <div class="offcanvas-body">
             <ul class="list-group">
                 <li class="list-group-item">
-                    <a href="#" class="btn btn-link text-decoration-none">
+                    <a href="<%= root_path %>" class="btn btn-link text-decoration-none">
                         <i class="bi bi-house-door"></i> Inicio
                     </a>
                 </li>
