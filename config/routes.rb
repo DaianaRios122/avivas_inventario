@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+ 
+   # Ruta para el Storefront
+  resources :storefront, only: [:index, :show], controller: "storefront"
 
   resources :ventas, except: [:edit, :update] do
     member do
@@ -21,7 +24,7 @@ Rails.application.routes.draw do
     end
   end
   devise_for :usuarios
-  root "home#index"
+  root "storefront#index"
   get "home/index"
   
   get "up" => "rails/health#show", as: :rails_health_check

@@ -15,6 +15,10 @@ class Producto < ApplicationRecord
   validates :fecha_ingreso, presence: true
   validate :fecha_ingreso_valida
   scope :activos, -> { where(fecha_baja: nil) } # Productos activos (no eliminados)
+  scope :filter_by_category, ->(categoria_id) { where(categoria_id: categoria_id) if categoria_id.present? }
+  scope :search, ->(query) {
+     where("LOWER(nombre) LIKE :query OR LOWER(descripcion) LIKE :query", query: "%#{query.downcase}%") if query.present?
+  }
 
 
   # Borrado lógico (poner stock en 0)

@@ -1,0 +1,117 @@
+<div class="container mt-4">
+  <div class="row">
+    <!-- Barra lateral para categorías -->
+    <div class="col-md-3">
+      <h5 class="text-dark">Categorías</h5> <!-- Color gris oscuro para el nombre de la categoría -->
+      <ul class="list-group shadow-sm">
+        <li class="list-group-item">
+          <a href="<%= storefront_index_path %>" class="text-decoration-none text-dark <%= 'active' if params[:categoria_id].nil? %>">Todos los productos</a> <!-- Resalta cuando no se selecciona ninguna categoría -->
+        </li>
+        <% @categorias.each do |categoria| %>
+          <li class="list-group-item">
+            <a href="<%= storefront_index_path(categoria_id: categoria.id) %>" class="text-decoration-none text-dark <%= 'active' if params[:categoria_id].to_i == categoria.id %>">
+              <%= categoria.nombre %>
+            </a>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+
+    <!-- Sección principal de productos -->
+    <div class="col-md-9">
+      <!-- Formulario de búsqueda -->
+      <form method="get" action="<%= storefront_index_path %>" class="mb-3">
+        <div class="input-group shadow-sm">
+          <input type="text" name="query" class="form-control" placeholder="Buscar productos..." value="<%= params[:query] %>">
+          <button class="btn btn-profile" type="submit">Buscar</button>
+        </div>
+      </form>
+
+      <% if @productos.any? %>
+        <!-- Lista de productos -->
+        <div class="row">
+          <% @productos.each do |producto| %>
+            <div class="col-md-4 mb-4">
+              <div class="card shadow-sm">
+                <% if producto.imagenes.attached? %>
+                  <!-- Carousel de imágenes -->
+                  <div id="carousel<%= producto.id %>" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                      <% producto.imagenes.each_with_index do |imagen, index| %>
+                        <div class="carousel-item <%= 'active' if index == 0 %>">
+                          <%= image_tag url_for(imagen), class: "d-block w-100", style: "height: 200px; object-fit: cover;" %>
+                        </div>
+                      <% end %>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel<%= producto.id %>" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Anterior</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carousel<%= producto.id %>" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Siguiente</span>
+                    </button>
+                  </div>
+                <% else %>
+                  <%= image_tag "placeholder.jpg", class: "card-img-top", style: "height: 200px; object-fit: cover;", alt: "Sin imagen" %>
+                <% end %>
+
+                <div class="card-body">
+                  <h5 class="card-title"><%= producto.nombre %></h5>
+                  <p class="card-text text-muted">
+                    <%= truncate(producto.descripcion, length: 80) %>
+                  </p>
+                  <p class="mb-2"><strong>Precio:</strong> $<%= producto.precio_unitario %></p>
+                  <p class="mb-2"><strong>Stock:</strong> <%= producto.stock_disponible > 0 ? producto.stock_disponible : "Agotado" %></p>
+                  <a href="<%= storefront_path(producto) %>" class="btn btn-profile btn-sm w-100">Ver detalles</a>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="alert alert-warning shadow-sm">No se encontraron productos para tu búsqueda.</div>
+      <% end %>
+
+      <!-- Paginación -->
+      <div class="d-flex justify-content-center">
+        <%= paginate @productos %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Agrega el siguiente CSS para personalizar los botones -->
+<style>
+  
+  /* Estilo para los botones de categoría (gris oscuro) */
+  .btn-dark {
+    color: #fff;
+    background-color: #333;
+    border: none;
+  }
+
+  .btn-dark:hover {
+    background-color: #444;
+  }
+
+  /* Estilo para los enlaces de categorías (gris oscuro, sin bordes) */
+  .text-dark {
+    color: #333 !important;  /* Color gris oscuro */
+  }
+
+  .text-dark:hover {
+    color: #444 !important; /* Color gris oscuro en hover */
+  }
+
+  /* Resaltar la categoría seleccionada */
+  .list-group-item .active {
+    background-color: #ccc !important;
+    color: #000 !important;
+  }
+  .list-group-item a:hover {
+  background-color: #f1f1f1; /* Fondo gris claro */
+}
+</style>
+
+
