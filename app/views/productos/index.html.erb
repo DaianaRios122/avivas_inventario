@@ -15,12 +15,34 @@
   </div>
 <% end %>
 
-<%# Botón de Crear Producto %>
-  <div class="d-flex justify-content-end mb-3">
-    <%= link_to 'Crear Producto', new_producto_path, class: "btn btn-profile btn-sm"  %>
+<%# Filtros de búsqueda %>
+<div class="card shadow mb-4">
+  <div class="card-body">
+    <%= form_with url: productos_path, method: :get, local: true, class: "row g-3 align-items-end" do |f| %>
+      <div class="col-md-4">
+        <%= f.label :query, "Buscar por nombre o descripción:", class: "form-label fw-bold" %>
+        <%= f.text_field :query, value: params[:query], class: "form-control" %>
+      </div>
+      <div class="col-md-4">
+        <%= f.label :categoria_id, "Filtrar por categoría:", class: "form-label fw-bold" %>
+        <%= f.select :categoria_id, options_from_collection_for_select(@categorias, :id, :nombre, params[:categoria_id]), { include_blank: "Todas" }, class: "form-select" %>
+      </div>
+      <div class="col-md-2">
+        <%= f.submit "Buscar", class: "btn btn-warning  w-100" %>
+      </div>
+      <div class="col-md-2">
+        <%= link_to "Reiniciar", productos_path, class: "btn btn-secondary w-100" %>
+      </div>
+    <% end %>
+  </div>
 </div>
-<% if @productos.present? %>
-  
+
+<%# Botón de Crear Producto %>
+<div class="d-flex justify-content-end mb-3">
+  <%= link_to 'Crear Producto', new_producto_path, class: "btn btn-profile btn-sm" %>
+</div>
+
+<% if @productos_index.present? %>
   <%# Tabla de Productos %>
   <table class="table table-hover table-bordered align-middle">
     <thead class="table-dark">
@@ -33,24 +55,19 @@
       </tr>
     </thead>
     <tbody>
-      <% @productos.each do |producto| %>
+      <% @productos_index.each do |producto| %>
         <tr>
           <td><%= producto.nombre %></td>
           <td><%= number_to_currency(producto.precio_unitario) %></td>
           <td><%= producto.stock_disponible %></td>
           <td><%= producto.fecha_ingreso.strftime("%d/%m/%Y %H:%M") %></td>
           <td>
-            <%# Botón Mostrar %>
             <%= link_to producto_path(producto), class: 'btn btn-info btn-sm me-1', title: 'Mostrar' do %>
               <i class="bi bi-eye"></i>
             <% end %>
-
-            <%# Botón Editar %>
             <%= link_to edit_producto_path(producto), class: 'btn btn-warning btn-sm me-1', title: 'Editar' do %>
               <i class="bi bi-pencil"></i>
             <% end %>
-
-            <%# Botón Eliminar %>
             <%= button_to producto_path(producto), method: :delete, class: 'btn btn-danger btn-sm', data: { confirm: '¿Estás seguro de que deseas eliminar este producto?' }, title: 'Eliminar' do %>
               <i class="bi bi-trash"></i>
             <% end %>
@@ -65,3 +82,8 @@
 <% else %>
   <p class="text-center">No hay productos registrados.</p>
 <% end %>
+
+<%# Paginación mejorada %>
+<div class="d-flex justify-content-center">
+  <%= paginate @productos_index, theme: 'bootstrap-4' %>
+</div>

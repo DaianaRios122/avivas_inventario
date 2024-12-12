@@ -13,6 +13,20 @@ class Venta < ApplicationRecord
   # Antes de guardar la venta, verifica el stock y calcula el total
   before_save :verificar_stock, :calcular_total
 
+  # Filtro para las ventas activas o canceladas
+  scope :filtrar_por_estado, ->(estado) { where(estado: estado) if estado.present? }
+
+  # Filtro por empleado (usuario)
+  scope :filtrar_por_empleado, ->(empleado_id) { where(usuario_id: empleado_id) if empleado_id.present? }
+
+  # Método para aplicar los filtros y la paginación
+  def self.aplicar_filtros(params)
+    ventas = Venta.all
+    ventas = ventas.filtrar_por_estado(params[:estado])
+    ventas = ventas.filtrar_por_empleado(params[:empleado_id])
+    ventas.page(params[:page]).per(4) # Paginación con Kaminari
+  end
+
 
   def cancelar
     raise "La venta ya está cancelada." unless estado

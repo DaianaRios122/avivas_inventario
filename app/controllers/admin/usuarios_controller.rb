@@ -7,7 +7,7 @@ class Admin::UsuariosController < ApplicationController
 
   
   def index
-    @usuarios = Usuario.all.order(:nombre_usuario)
+    @usuarios = Usuario.aplicar_filtros(params)
     puts "Usuarios: #{@usuarios}"
   end
 
@@ -29,7 +29,7 @@ class Admin::UsuariosController < ApplicationController
     @usuario = Usuario.find(params[:id])
     # Solo el propio usuario o un administrador/gerente pueden editar
     if current_usuario.empleado? && @usuario.id != current_usuario.id
-      redirect_to root_path, alert: 'No tienes permisos para editar este usuario.'
+      redirect_to home_index_path, alert: 'No tienes permisos para editar este usuario.'
     end
   end
   
@@ -103,7 +103,7 @@ class Admin::UsuariosController < ApplicationController
     logger.debug "Usuario actual: #{current_usuario.rol}"  # Verifica el rol del usuario actual
     puts "Usuario actual: #{current_usuario.rol}"  # Verifica el rol del usuario actual
     unless current_usuario.administrador? || current_usuario.gerente?
-      redirect_to root_path, alert: 'No tienes permisos para acceder a esta sección.'
+      redirect_to home_index_path, alert: 'No tienes permisos para acceder a esta sección.'
     end
   end
 

@@ -15,9 +15,19 @@ class Usuario < ApplicationRecord
   validate :validar_fecha_ingreso 
   validates :rol, inclusion: { in: %w[administrador gerente empleado] }
   validate :gerente_no_asigna_admin, if: :gerente?
-  
-  
-  
+
+  # los scopes para los filtros
+  scope :by_rol, ->(rol) { where(rol: rol) }
+  scope :by_activo, ->(activo) { where(activo: activo) }
+
+  def self.aplicar_filtros(params)
+    usuarios = Usuario.all.order(:nombre_usuario)
+    usuarios = usuarios.by_rol(params[:rol]) if params[:rol].present?
+    usuarios = usuarios.by_activo(params[:activo]) if params[:activo].present?
+    usuarios.page(params[:page]).per(4)
+  end
+
+  # Desactivar un usuario
   def desactivar!
     if self.update(
       activo: false,

@@ -63,7 +63,7 @@
                   </p>
                   <p class="mb-2"><strong>Precio:</strong> $<%= producto.precio_unitario %></p>
                   <p class="mb-2"><strong>Stock:</strong> <%= producto.stock_disponible > 0 ? producto.stock_disponible : "Agotado" %></p>
-                  <a href="<%= storefront_path(producto) %>" class="btn btn-profile btn-sm w-100">Ver detalles</a>
+                  <a href="<%= storefront_path(producto) %>" class="btn btn-profile btn-sm w-100">Ver Producto</a>
                 </div>
               </div>
             </div>
@@ -75,7 +75,7 @@
 
       <!-- Paginación -->
       <div class="d-flex justify-content-center">
-        <%= paginate @productos %>
+        <%= paginate @productos, theme: 'bootstrap-4' %>
       </div>
     </div>
   </div>

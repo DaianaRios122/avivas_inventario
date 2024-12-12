@@ -6,9 +6,10 @@ class VentasController < ApplicationController
 
   # Listar todas las ventas
   def index
-    @ventas = Venta.all
+    @ventas = Venta.aplicar_filtros(params) # Aplicar filtros y paginación
+    @empleados = Usuario.all # Lista de empleados para el filtro
   end
-
+   
   # Crear una nueva venta
   def new
     @venta = Venta.new

@@ -20,6 +20,12 @@ class Producto < ApplicationRecord
      where("LOWER(nombre) LIKE :query OR LOWER(descripcion) LIKE :query", query: "%#{query.downcase}%") if query.present?
   }
 
+  def self.aplicar_filtros(params)
+        productos = Producto.activos  # Filtrar productos que no tienen fecha de baja
+                            .filter_by_category(params[:categoria_id])
+                            .search(params[:query])
+                            .page(params[:page]).per(9) # Paginación                     
+  end
 
   # Borrado lógico (poner stock en 0)
   def eliminar_producto

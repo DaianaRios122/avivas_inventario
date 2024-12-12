@@ -2,12 +2,13 @@ class ProductosController < ApplicationController
   before_action :authenticate_usuario!
   load_and_authorize_resource
   before_action :set_producto, only: %i[ show edit update destroy edit_stock ]
-  before_action :load_categories, only: %i[ new edit create update]  # Cargar categorías
+  before_action :load_categories, only: %i[ new edit create update index]  # Cargar categorías
 
 
   # GET /productos or /productos.json
   def index
-    @productos = Producto.activos  # Filtrar productos que no tienen fecha de baja
+    @productos_index = Producto.aplicar_filtros(params)
+    @productos = Producto.activos  
     respond_to do |format|
       format.html # Para vistas normales
       format.json { render json: @productos.select(:id, :nombre) } # Para solicitudes AJAX

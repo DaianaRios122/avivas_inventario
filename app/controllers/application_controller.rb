@@ -12,6 +12,11 @@ class ApplicationController < ActionController::Base
     home_index_path  # Redirige a la ruta home/index
   end
 
+  rescue_from CanCan::AccessDenied do |exception|
+    # Redirigir al usuario con un mensaje de error
+    redirect_to home_index_path, alert: "No tienes permiso para realizar esta acción."
+  end
+
   protected
 
   # Método que agrega los parámetros personalizados a los parámetros permitidos por Devise durante el registro.

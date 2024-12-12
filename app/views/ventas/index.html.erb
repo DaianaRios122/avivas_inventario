@@ -15,16 +15,36 @@
   </div>
 <% end %>
 
-<% if @ventas.present? %>
-  <%# Botón de Crear Venta %>
-  <div class="d-flex justify-content-end mb-3">
-    <%= link_to 'Crear Venta', new_venta_path, class: "btn btn-profile btn-sm"  %>
+<%# Filtros de búsqueda y búsqueda similar a la de productos %>
+<div class="card shadow mb-4">
+  <div class="card-body">
+    <%= form_with(url: ventas_path, method: :get, class: 'row g-3 align-items-end') do |f| %>
+      <div class="col-md-4">
+        <%= f.select :empleado_id, options_for_select(@empleados.map { |u| [u.nombre_usuario, u.id] }, selected: params[:empleado_id]), { include_blank: 'Seleccione Empleado' }, class: 'form-select' %>
+      </div>
+      <div class="col-md-4">
+        <%= f.select :estado, options_for_select([['Activa', true], ['Cancelada', false]], selected: params[:estado]), { include_blank: 'Seleccione Estado' }, class: 'form-select' %>
+      </div>
+      <div class="col-md-2">
+        <%= f.submit 'Filtrar', class: 'btn btn-warning w-100' %>
+      </div>
+      <div class="col-md-2">
+        <%= link_to 'Reiniciar filtros', ventas_path, class: 'btn btn-secondary w-100' %>
+      </div>
+    <% end %>
   </div>
-  <%# Tabla de Ventas %>
+</div>
+
+<%# Botón para crear venta %>
+<div class="d-flex justify-content-end mb-3">
+  <%= link_to 'Crear Venta', new_venta_path, class: "btn btn-profile btn-sm" %>
+</div>
+
+<% if @ventas.present? %>
   <table class="table table-hover table-bordered align-middle">
     <thead class="table-dark">
       <tr>
-        <th>Fecha_Hora de realización</th>
+        <th>Fecha/Hora de realización</th>
         <th>Cliente</th>
         <th>Empleado</th>
         <th>Total</th>
@@ -45,24 +65,26 @@
             </span>
           </td>
           <td>
-            <%# Botón Mostrar %>
             <%= link_to venta_path(venta), class: 'btn btn-info btn-sm me-1', title: 'Mostrar' do %>
               <i class="bi bi-eye"></i>
             <% end %>
-            <%# Botón Cancelar Venta (Destroy) %>
+            
             <% if venta.estado %>
-                 <%= button_to venta_path(venta), method: :delete, class: "btn btn-danger btn-sm", data: { confirm: "¿Estás seguro de que deseas cancelar esta venta?" }, title: 'Cancelar' do %>
-                      <i class="bi bi-x-circle"></i>
-            <% end %>
+              <%= button_to venta_path(venta), method: :delete, class: "btn btn-danger btn-sm", data: { confirm: "¿Estás seguro de que deseas cancelar esta venta?" }, title: 'Cancelar' do %>
+                <i class="bi bi-x-circle"></i>
+              <% end %>
             <% else %>
-                 <span class="text-muted">Cancelada</span>
+              <span class="text-muted">Cancelada</span>
             <% end %>
           </td>
         </tr>
       <% end %>
     </tbody>
   </table>
+
+  <div class="d-flex justify-content-center">
+    <%= paginate @ventas, theme: 'bootstrap-4' %> 
+  </div>
 <% else %>
   <p class="text-center">No hay ventas registradas.</p>
 <% end %>
-
