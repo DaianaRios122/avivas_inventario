@@ -9,7 +9,8 @@ class Producto < ApplicationRecord
   validates :stock_disponible, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validate :correct_image_type, on: :create
   validate :correct_image_size, on: :create
-  validates :imagenes, presence: { message: "Debe tener al menos una imagen" }, on: :create
+  #validates :imagenes, presence: { message: "Debe tener al menos una imagen" }, on: :create
+  validates :imagenes, presence: { message: "Debe tener al menos una imagen" }, on: :create, if: :imagenes_present?
   validates :talle, length: { maximum: 50 }, allow_blank: true
   validates :color, length: { maximum: 50 }, allow_blank: true
   validates :fecha_ingreso, presence: true
@@ -60,5 +61,9 @@ class Producto < ApplicationRecord
 
   def fecha_ingreso_valida
     errors.add(:fecha_ingreso, "debe ser una fecha válida") unless fecha_ingreso.is_a?(Date) || fecha_ingreso.is_a?(Time)
+  end
+
+  def imagenes_present?
+    imagenes.attached?
   end
 end
